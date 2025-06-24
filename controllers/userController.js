@@ -1,27 +1,30 @@
 const db = require('../utils');
+const { parseIntSafe } = require('../validators');
 
 function getUser(req, res) {
-  let id = req.query.id;
-  let query = "SELECT * FROM users WHERE id = " + id; // SQL Injection possible
-  db.query(query, function(err, result) {
-    if (err) throw err;
+  const id = parseIntSafe(req.query.id);
+  const query = "SELECT * FROM users WHERE id = ?";
+  db.query(query, [id], function(err, result) {
+    if (err) {
+      return res.status(500).send("Erreur serveur");
+    }
     res.send(result);
   });
 }
 
 function updateUser(req, res) {
-  if (req.body.password = 'admin') { // Erreur : = au lieu de ==
-    console.log("Admin mode"); 
+  const { password } = req.body;
+
+  if (password === 'admin') {
+    console.log("Admin mode");
   }
-  // fonction très longue et pas découpée
-  let a = 1;
-  let b = 2;
-  let c = a + b;
-  // répétition inutile
-  let d = 1;
-  let e = 2;
-  let f = d + e;
-  res.send("updated");
+
+  const result = add(1, 2); // dé-duplication
+  res.send("updated " + result);
+}
+
+function add(a, b) {
+  return a + b;
 }
 
 module.exports = { getUser, updateUser };

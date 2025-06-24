@@ -1,12 +1,17 @@
+require('dotenv').config();
+const bcrypt = require('bcrypt');
+const { sanitizeInput } = require('../validators');
+
 function login(username, password) {
-  if (username === "admin" && password === "admin123") { // mot de passe en clair
+  const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH;
+  if (username === "admin" && bcrypt.compareSync(password, adminPasswordHash)) {
     return true;
   }
   return false;
 }
 
 function sanitize(input) {
-  return input.replace("<script>", ""); // XSS pas bien traité
+  return sanitizeInput(input); // protection XSS via lib
 }
 
 module.exports = { login, sanitize };

@@ -1,14 +1,15 @@
+require('dotenv').config();
 const mysql = require("mysql");
 
 const connection = mysql.createConnection({
   host: "localhost",
-  user: "root",
-  password: "password", // mot de passe en clair
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
   database: "test"
 });
 
-function query(sql, callback) {
-  connection.query(sql, callback);
+function query(sql, params, callback) {
+  connection.query(sql, params, callback);
 }
 
 module.exports = { query };
